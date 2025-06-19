@@ -135,25 +135,9 @@ struct DailyProgressView: View {
                         }
 
                         ForEach(entry.habits, id: \.id) { habit in
-                            HStack {
-                                Image(systemName: habit.type == .good ? "plus.circle.fill" : "minus.circle.fill")
-                                    .foregroundColor(habit.type == .good ? .green : .red)
-                                if let value = habit.value, let unit = habit.unit {
-                                    Text("\(habit.name) (\(value) \(unit))")
-                                } else {
-                                    Text(habit.name)
-                                }
-                                Spacer()
-                                Text("\(habit.points > 0 ? "+" : "")\(habit.points) pts")
-                                    .foregroundColor(habit.points > 0 ? .green : .red)
-                                Button(action: {
-                                    habitToDelete = habit
-                                    showingDeleteAlert = true
-                                }) {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .foregroundColor(.red)
-                                }
-                                .buttonStyle(BorderlessButtonStyle())
+                            ActivityRow(habit: habit) {
+                                habitToDelete = habit
+                                showingDeleteAlert = true
                             }
                         }
                     }
