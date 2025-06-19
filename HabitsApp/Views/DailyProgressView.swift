@@ -138,7 +138,11 @@ struct DailyProgressView: View {
                             HStack {
                                 Image(systemName: habit.type == .good ? "plus.circle.fill" : "minus.circle.fill")
                                     .foregroundColor(habit.type == .good ? .green : .red)
-                                Text(habit.name)
+                                if let value = habit.value, let unit = habit.unit {
+                                    Text("\(habit.name) (\(value) \(unit))")
+                                } else {
+                                    Text(habit.name)
+                                }
                                 Spacer()
                                 Text("\(habit.points > 0 ? "+" : "")\(habit.points) pts")
                                     .foregroundColor(habit.points > 0 ? .green : .red)
