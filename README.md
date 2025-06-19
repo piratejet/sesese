@@ -1,5 +1,11 @@
 # habits
 
+This app loads its list of default habits from `initial_habits.json` located in
+`HabitsApp/`.
+Make sure the file is included in your app bundle (add it to the Xcode project if needed).
+If the file cannot be found or decoded, the app falls back to a built-in set of
+habits so the list is never empty.
+
 
 
 ## Getting started

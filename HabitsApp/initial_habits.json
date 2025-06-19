@@ -1,0 +1,7 @@
+[
+  {"name":"Drink Water","points":2,"type":"Good Habit","category":"Health"},
+  {"name":"Meditate","points":10,"type":"Good Habit","category":"Mindfulness"},
+  {"name":"Workout","points":15,"type":"Good Habit","category":"Fitness"},
+  {"name":"Junk Food","points":-10,"type":"Bad Habit","category":"Diet"},
+  {"name":"Procrastinate","points":-5,"type":"Bad Habit","category":"Productivity"}
+]
