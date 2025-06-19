@@ -1,5 +1,8 @@
 # habits
 
+This app loads its list of default habits from `initial_habits.json` located in
+`HabitsApp/`. Edit this file to change the habits without modifying source code.
+
 
 
 ## Getting started
