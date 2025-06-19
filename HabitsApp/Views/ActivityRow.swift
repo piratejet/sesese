@@ -7,10 +7,13 @@ struct ActivityRow: View {
         HStack {
             Image(systemName: habit.type == .good ? "checkmark.circle.fill" : "xmark.circle.fill")
                 .foregroundColor(habit.type == .good ? .green : .red)
-            if let value = habit.value, let unit = habit.unit {
-                Text("\(habit.name) (\(value) \(unit))")
-            } else {
+            VStack(alignment: .leading) {
                 Text(habit.name)
+                if let value = habit.value, let unit = habit.unit {
+                    Text("\(value) \(unit)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
             Spacer()
             Text("\(habit.points > 0 ? "+" : "")\(habit.points) pts")
