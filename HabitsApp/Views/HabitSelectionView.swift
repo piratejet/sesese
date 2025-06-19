@@ -1,0 +1,74 @@
+// File: Views/HabitSelectionView.swift
+import SwiftUI
+
+struct HabitSelectionView: View {
+    @EnvironmentObject var viewModel: HabitViewModel
+    @Binding var selectedCategory: String
+    @Binding var selectedType: HabitType?
+    var completionDate: Date?      // Optional day you tapped
+    @Environment(\.dismiss) var dismiss
+    @State private var searchText = ""
+
+    // Simple filter in one computed property
+    private var filteredHabits: [Habit] {
+        viewModel.allHabits.filter { habit in
+            let matchesCategory = (selectedCategory == "All") || (habit.category == selectedCategory)
+            let matchesType     = (selectedType == nil)       || (habit.type == selectedType)
+            let matchesSearch   = searchText.isEmpty           ||
+                                  habit.name.localizedCaseInsensitiveContains(searchText)
+            return matchesCategory && matchesType && matchesSearch
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Filters") {
+                    Picker("Category", selection: $selectedCategory) {
+                        ForEach(viewModel.categories, id: \.self) { category in
+                            Text(category)
+                        }
+                    }
+                    Picker("Habit Type", selection: $selectedType) {
+                        Text("All").tag(nil as HabitType?)
+                        ForEach(HabitType.allCases, id: \.self) { type in
+                            Text(type.rawValue).tag(type as HabitType?)
+                        }
+                    }
+                }
+
+                Section("Habits") {
+                    ForEach(filteredHabits) { habit in
+                        Button {
+                            // Use the correct ViewModel methods
+                            if let day = completionDate {
+                                viewModel.addCompletion(habit, at: day)
+                            } else {
+                                viewModel.add(habit)
+                            }
+                            dismiss()
+                        } label: {
+                            HStack {
+                                Image(systemName: habit.type == .good
+                                      ? "plus.circle.fill" : "minus.circle.fill")
+                                    .foregroundColor(habit.type == .good ? .green : .red)
+                                Text(habit.name)
+                                Spacer()
+                                Text("\(habit.points > 0 ? "+" : "")\(habit.points) pts")
+                                    .bold()
+                                    .foregroundColor(habit.points > 0 ? .green : .red)
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Add Habit")
+            .searchable(text: $searchText, prompt: "Search habits")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
+    }
+}
