@@ -17,7 +17,7 @@ struct RecentActivityView: View {
             if sortedActivities.isEmpty {
                 Text("No activities yet").foregroundColor(.gray).padding()
             } else {
-                ForEach(sortedActivities.prefix(3), id: \ .habit.id) { activity in
+                ForEach(sortedActivities.prefix(3), id: \.habit.id) { activity in
                     ActivityRow(habit: activity.habit) {
                         habitToDelete = activity.habit
                         showingDeleteAlert = true
