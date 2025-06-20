@@ -1,3 +1,5 @@
+import Foundation
+
 protocol KeyValueStore {
     func string(forKey key: String) -> String?
     func integer(forKey key: String) -> Int
