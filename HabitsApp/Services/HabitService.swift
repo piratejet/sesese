@@ -69,4 +69,17 @@ class HabitService {
     func fetchAllHabits() -> [Habit] {
         repository.fetchAllHabits()
     }
+
+    // MARK: - Template Management
+    func addHabitTemplate(_ habit: Habit) {
+        repository.addHabitTemplate(habit)
+    }
+
+    func updateHabitTemplate(_ habit: Habit) {
+        repository.updateHabitTemplate(habit)
+    }
+
+    func removeHabitTemplate(_ habit: Habit) {
+        repository.removeHabitTemplate(habit)
+    }
 }

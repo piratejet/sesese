@@ -6,6 +6,8 @@ Make sure the file is included in your app bundle (add it to the Xcode project i
 If the file cannot be found or decoded, the app falls back to a built-in set of
 habits so the list is never empty.
 
+Habit templates can now be managed directly in the app. Open the **Habits** tab to add, edit, or remove templates. All changes are stored locally on disk.
+
 
 
 ## Getting started

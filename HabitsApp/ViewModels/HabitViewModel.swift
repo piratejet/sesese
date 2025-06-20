@@ -92,6 +92,22 @@ class HabitViewModel: ObservableObject {
         reloadAll()
     }
 
+    // MARK: - Habit Template Management
+    func addHabitTemplate(_ habit: Habit) {
+        service.addHabitTemplate(habit)
+        reloadAll()
+    }
+
+    func updateHabitTemplate(_ habit: Habit) {
+        service.updateHabitTemplate(habit)
+        reloadAll()
+    }
+
+    func removeHabitTemplate(_ habit: Habit) {
+        service.removeHabitTemplate(habit)
+        reloadAll()
+    }
+
     /// Retrieve the completion date for a given habit, if available
     func completionDate(for habit: Habit) -> Date? {
         service.fetchCompletedHabitDates()[habit]
