@@ -38,6 +38,12 @@ class HabitService {
             .reduce(0) { $0 + $1.key.points }
     }
 
+    /// Total points accumulated across all time
+    func totalPointsAllTime() -> Int {
+        repository.fetchCompletedHabits()
+            .reduce(0) { $0 + $1.key.points }
+    }
+
     /// Fractional progress toward daily target
     func dailyProgress() -> Double {
         min(Double(totalPointsToday()) / dailyTarget, 1.0)

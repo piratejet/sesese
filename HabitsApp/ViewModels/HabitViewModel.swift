@@ -5,10 +5,15 @@ import Combine
 /// Protocol to abstract key–value storage for user info
 protocol KeyValueStore {
     func string(forKey key: String) -> String?
+    func integer(forKey key: String) -> Int
     func set(_ value: Any?, forKey key: String)
 }
 
-extension UserDefaults: KeyValueStore {}
+extension UserDefaults: KeyValueStore {
+    func integer(forKey key: String) -> Int {
+        object(forKey: key) as? Int ?? 0
+    }
+}
 
 /// A user achievement/trophy
 struct Achievement: Identifiable {
@@ -22,6 +27,7 @@ struct Achievement: Identifiable {
 class HabitViewModel: ObservableObject {
     // MARK: - Published State
     @Published var totalPoints: Int = 0
+    @Published var gems: Int = 0
     @Published var dailyProgress: Double = 0.0
     @Published var categories: [String] = []
     @Published var dailyHistory: [(date: Date, habits: [Habit])] = []
@@ -45,13 +51,14 @@ class HabitViewModel: ObservableObject {
         self.store   = store
         self.userName  = store.string(forKey: "userName")  ?? ""
         self.userEmail = store.string(forKey: "userEmail") ?? ""
+        self.gems      = store.integer(forKey: "gems")
         setupAchievements()
         reloadAll()
     }
 
     // MARK: - Data Loading
     func reloadAll() {
-        totalPoints   = service.totalPointsToday()
+        totalPoints   = service.totalPointsAllTime()
         dailyProgress = service.dailyProgress()
         categories    = service.categories()
         dailyHistory  = service.dailyHistory()
