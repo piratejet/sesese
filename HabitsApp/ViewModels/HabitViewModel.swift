@@ -92,6 +92,22 @@ class HabitViewModel: ObservableObject {
         reloadAll()
     }
 
+    // MARK: - Habit Template Management
+    func addHabitTemplate(_ habit: Habit) {
+        service.addHabitTemplate(habit)
+        reloadAll()
+    }
+
+    func updateHabitTemplate(_ habit: Habit) {
+        service.updateHabitTemplate(habit)
+        reloadAll()
+    }
+
+    func removeHabitTemplate(_ habit: Habit) {
+        service.removeHabitTemplate(habit)
+        reloadAll()
+    }
+
     // MARK: - User Registration
     func register(name: String, email: String) {
         userName  = name

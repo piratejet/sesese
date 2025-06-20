@@ -13,6 +13,9 @@ struct MainView: View {
 
             AchievementsView()
                 .tabItem { Label("Trophies",  systemImage: "trophy.fill") }
+
+            HabitTemplatesView()
+                .tabItem { Label("Habits", systemImage: "list.bullet") }
         }
         .environmentObject(viewModel)
     }
