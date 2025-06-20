@@ -7,7 +7,10 @@ struct RecentActivityView: View {
 
     var sortedActivities: [(habit: Habit, date: Date)] {
         viewModel.dailyHistory.flatMap { entry in
-            entry.habits.map { (habit: $0, date: entry.date) }
+            entry.habits.compactMap { habit in
+                guard let actual = viewModel.completionDate(for: habit) else { return nil }
+                return (habit: habit, date: actual)
+            }
         }.sorted { $0.date > $1.date }
     }
 
@@ -18,7 +21,7 @@ struct RecentActivityView: View {
                 Text("No activities yet").foregroundColor(.gray).padding()
             } else {
                 ForEach(sortedActivities.prefix(3), id: \.habit.id) { activity in
-                    ActivityRow(habit: activity.habit) {
+                    ActivityRow(habit: activity.habit, date: activity.date) {
                         habitToDelete = activity.habit
                         showingDeleteAlert = true
                     }

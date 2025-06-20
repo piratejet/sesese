@@ -135,7 +135,7 @@ struct DailyProgressView: View {
                         }
 
                         ForEach(entry.habits, id: \.id) { habit in
-                            ActivityRow(habit: habit) {
+                            ActivityRow(habit: habit, date: viewModel.completionDate(for: habit)) {
                                 habitToDelete = habit
                                 showingDeleteAlert = true
                             }

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ActivityRow: View {
     let habit: Habit
+    let date: Date?
     let onDelete: () -> Void
     var body: some View {
         HStack {
@@ -12,6 +13,11 @@ struct ActivityRow: View {
                 if let value = habit.value, let unit = habit.unit {
                     Text("\(value) \(unit)")
                         .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                if let d = date {
+                    Text(d, style: .time)
+                        .font(.caption2)
                         .foregroundColor(.secondary)
                 }
             }
