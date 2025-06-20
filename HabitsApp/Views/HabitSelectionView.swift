@@ -42,7 +42,15 @@ struct HabitSelectionView: View {
                         Button {
                             // Use the correct ViewModel methods
                             if let day = completionDate {
-                                viewModel.addCompletion(habit, at: day)
+                                // Preserve the selected day but use the current time
+                                let now = Date()
+                                var comps = Calendar.current.dateComponents([.year, .month, .day], from: day)
+                                let time = Calendar.current.dateComponents([.hour, .minute, .second], from: now)
+                                comps.hour = time.hour
+                                comps.minute = time.minute
+                                comps.second = time.second
+                                let timestamp = Calendar.current.date(from: comps) ?? day
+                                viewModel.addCompletion(habit, at: timestamp)
                             } else {
                                 viewModel.add(habit)
                             }
