@@ -34,9 +34,9 @@ struct DailyProgressView: View {
             current = next
         }
 
-        return dates.map { date in
-            let total = pointsDict[date] ?? 0
-            let fraction = min(Double(total) / 100.0, 1.0)
+       return dates.map { date in
+           let total = pointsDict[date] ?? 0
+            let fraction = min(Double(total) / Double(viewModel.dailyTarget), 1.0)
             return (date: date, progress: fraction)
         }
     }

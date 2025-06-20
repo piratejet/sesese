@@ -45,6 +45,20 @@ struct ProfileHeader: View {
                         .font(.headline)
                 }
             }
+
+            Stepper(value: Binding(
+                get: { viewModel.dailyTarget },
+                set: { viewModel.updateDailyTarget($0) }
+            ), in: 10...1000, step: 10) {
+                HStack {
+                    Text("Daily Target")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Text("\(viewModel.dailyTarget) pts")
+                        .font(.headline)
+                }
+            }
         }
         .padding()
         .background(Color(.systemGray6))

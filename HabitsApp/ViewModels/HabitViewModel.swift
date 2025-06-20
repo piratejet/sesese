@@ -2,18 +2,7 @@
 import Foundation
 import Combine
 
-/// Protocol to abstract key–value storage for user info
-protocol KeyValueStore {
-    func string(forKey key: String) -> String?
-    func integer(forKey key: String) -> Int
-    func set(_ value: Any?, forKey key: String)
-}
-
-extension UserDefaults: KeyValueStore {
-    func integer(forKey key: String) -> Int {
-        object(forKey: key) as? Int ?? 0
-    }
-}
+// KeyValueStore protocol moved to Supporting/KeyValueStore.swift
 
 /// A user achievement/trophy
 struct Achievement: Identifiable {
@@ -28,6 +17,7 @@ class HabitViewModel: ObservableObject {
     // MARK: - Published State
     @Published var totalPoints: Int = 0
     @Published var gems: Int = 0
+    @Published var dailyTarget: Int = 100
     @Published var dailyProgress: Double = 0.0
     @Published var categories: [String] = []
     @Published var dailyHistory: [(date: Date, habits: [Habit])] = []
@@ -52,12 +42,14 @@ class HabitViewModel: ObservableObject {
         self.userName  = store.string(forKey: "userName")  ?? ""
         self.userEmail = store.string(forKey: "userEmail") ?? ""
         self.gems      = store.integer(forKey: "gems")
+        self.dailyTarget = service.getDailyTarget()
         setupAchievements()
         reloadAll()
     }
 
     // MARK: - Data Loading
     func reloadAll() {
+        dailyTarget  = service.getDailyTarget()
         totalPoints   = service.totalPointsAllTime()
         dailyProgress = service.dailyProgress()
         categories    = service.categories()
@@ -121,6 +113,12 @@ class HabitViewModel: ObservableObject {
         store.set(email, forKey: "userEmail")
     }
 
+    func updateDailyTarget(_ target: Int) {
+        dailyTarget = target
+        service.updateDailyTarget(target)
+        reloadAll()
+    }
+
     // MARK: - Achievements Setup & Evaluation
     private func setupAchievements() {
         achievements = [
@@ -150,7 +148,7 @@ class HabitViewModel: ObservableObject {
 
     // MARK: - Achievement Criteria Helpers
     private var dailyProgressHistory: [(date: Date, progress: Double)] {
-        let target = 100.0
+        let target = Double(dailyTarget)
         return dailyHistory.map { entry in
             let total = entry.habits.reduce(0) { acc, h in acc + h.points }
             let frac  = min(Double(total) / target, 1.0)

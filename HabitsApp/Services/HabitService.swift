@@ -3,11 +3,17 @@ import Foundation
 class HabitService {
     private let repository: HabitRepository
     private let clock: DateProvider
-    private let dailyTarget: Double = 100
+    private let store: KeyValueStore
+    private var dailyTargetValue: Int
 
-    init(repository: HabitRepository, clock: DateProvider = DefaultDateProvider()) {
+    init(repository: HabitRepository,
+         clock: DateProvider = DefaultDateProvider(),
+         store: KeyValueStore = UserDefaults.standard) {
         self.repository = repository
         self.clock = clock
+        self.store = store
+        let stored = store.integer(forKey: "dailyTarget")
+        self.dailyTargetValue = stored > 0 ? stored : 100
     }
 
     /// Record completion at the current time
@@ -46,7 +52,7 @@ class HabitService {
 
     /// Fractional progress toward daily target
     func dailyProgress() -> Double {
-        min(Double(totalPointsToday()) / dailyTarget, 1.0)
+        min(Double(totalPointsToday()) / Double(dailyTargetValue), 1.0)
     }
 
     /// Group completions by day, newest first
@@ -63,6 +69,13 @@ class HabitService {
     func categories() -> [String] {
         let set = Set(repository.fetchAllHabits().map { $0.category })
         return ["All"] + set.sorted()
+    }
+
+    func getDailyTarget() -> Int { dailyTargetValue }
+
+    func updateDailyTarget(_ target: Int) {
+        dailyTargetValue = target
+        store.set(target, forKey: "dailyTarget")
     }
 
     /// Return the full list of habit templates
