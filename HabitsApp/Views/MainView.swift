@@ -6,7 +6,7 @@ struct MainView: View {
     var body: some View {
         TabView {
             ContentView()
-                .tabItem { Label("Today",     systemImage: "house.fill") }
+                .tabItem { Label("Home",      systemImage: "house.fill") }
 
             InsightsView()
                 .tabItem { Label("Insights",  systemImage: "chart.bar.fill") }

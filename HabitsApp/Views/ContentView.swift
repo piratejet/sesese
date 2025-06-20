@@ -54,7 +54,9 @@ struct ContentView: View {
                     }
                     .padding()
                 }
-                .navigationTitle("Today")
+                .navigationTitle("")
+                .navigationBarHidden(true)
+                .navigationBarTitleDisplayMode(.inline)
                 .sheet(isPresented: $showingHabitList) {
                     HabitSelectionView(
                         selectedCategory: $selectedCategory,
