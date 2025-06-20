@@ -108,6 +108,11 @@ class HabitViewModel: ObservableObject {
         reloadAll()
     }
 
+    /// Retrieve the completion date for a given habit, if available
+    func completionDate(for habit: Habit) -> Date? {
+        service.fetchCompletedHabitDates()[habit]
+    }
+
     // MARK: - User Registration
     func register(name: String, email: String) {
         userName  = name
