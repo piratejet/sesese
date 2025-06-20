@@ -34,12 +34,14 @@ struct HabitTemplatesView: View {
                 }
             }
             .sheet(item: $editingHabit) { habit in
-                HabitTemplateFormView(habit: habit) { updated in
+                let cats = Set(viewModel.categories.filter { $0 != "All" } + [habit.category]).sorted()
+                HabitTemplateFormView(habit: habit, categories: cats) { updated in
                     viewModel.updateHabitTemplate(updated)
                 }
             }
             .sheet(isPresented: $showAdd) {
-                HabitTemplateFormView(habit: nil) { newHabit in
+                let cats = viewModel.categories.filter { $0 != "All" }
+                HabitTemplateFormView(habit: nil, categories: cats) { newHabit in
                     viewModel.addHabitTemplate(newHabit)
                 }
             }

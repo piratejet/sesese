@@ -10,16 +10,20 @@ struct HabitTemplateFormView: View {
     @State private var value: String
     @State private var unit: String
 
+    /// The list of available categories ("All" removed)
+    let categories: [String]
+
     let original: Habit?
     let onSave: (Habit) -> Void
 
-    init(habit: Habit?, onSave: @escaping (Habit) -> Void) {
+    init(habit: Habit?, categories: [String], onSave: @escaping (Habit) -> Void) {
         self.original = habit
+        self.categories = categories
         self.onSave = onSave
         _name = State(initialValue: habit?.name ?? "")
         _points = State(initialValue: habit?.points ?? 0)
         _type = State(initialValue: habit?.type ?? .good)
-        _category = State(initialValue: habit?.category ?? "")
+        _category = State(initialValue: habit?.category ?? categories.first ?? "")
         _value = State(initialValue: habit?.value.map { String($0) } ?? "")
         _unit = State(initialValue: habit?.unit ?? "")
     }
@@ -41,7 +45,11 @@ struct HabitTemplateFormView: View {
                             Text(type.rawValue).tag(type)
                         }
                     }
-                    TextField("Category", text: $category)
+                    Picker("Category", selection: $category) {
+                        ForEach(categories, id: \.self) { cat in
+                            Text(cat).tag(cat)
+                        }
+                    }
                     TextField("Value", text: $value)
                         .keyboardType(.numberPad)
                     TextField("Unit", text: $unit)
