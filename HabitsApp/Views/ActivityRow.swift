@@ -23,11 +23,16 @@ struct ActivityRow: View {
             }
             Spacer()
             Text("\(habit.points > 0 ? "+" : "")\(habit.points) pts")
-                .bold().foregroundColor(habit.points > 0 ? .green : .red)
-            Button(action: onDelete) {
-                Image(systemName: "xmark.circle.fill").foregroundColor(.red)
+                .bold()
+                .foregroundColor(habit.points > 0 ? .green : .red)
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .cornerRadius(8)
+        .swipeActions {
+            Button(role: .destructive, action: onDelete) {
+                Label("Delete", systemImage: "trash")
             }
         }
-        .padding().background(Color(.systemGray6)).cornerRadius(8)
     }
 }
