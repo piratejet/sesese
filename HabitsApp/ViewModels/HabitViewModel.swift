@@ -6,6 +6,7 @@ import Combine
 protocol KeyValueStore {
     func string(forKey key: String) -> String?
     func integer(forKey key: String) -> Int
+    func dictionary(forKey key: String) -> [String: Any]?
     func set(_ value: Any?, forKey key: String)
 }
 
@@ -43,6 +44,7 @@ class HabitViewModel: ObservableObject {
     private let store: KeyValueStore
     private var milestoneLevel: Int
     private let milestoneInterval: Int = 100
+    private let unlockedAchievementsKey = "unlockedAchievements"
 
     /// Indicates whether the user has completed registration
     var isRegistered: Bool { !userName.isEmpty && !userEmail.isEmpty }
@@ -56,6 +58,7 @@ class HabitViewModel: ObservableObject {
         self.gems      = store.integer(forKey: "gems")
         self.milestoneLevel = store.integer(forKey: "milestoneLevel")
         setupAchievements()
+        loadUnlockedAchievements()
         reloadAll()
     }
 
@@ -143,14 +146,37 @@ class HabitViewModel: ObservableObject {
         ]
     }
 
+    private func loadUnlockedAchievements() {
+        guard let dict = store.dictionary(forKey: unlockedAchievementsKey) else {
+            return
+        }
+        for index in achievements.indices {
+            if let date = dict[achievements[index].id] as? Date {
+                achievements[index].unlockedDate = date
+            }
+        }
+    }
+
+    private func saveUnlockedAchievements() {
+        let dict = achievements.reduce(into: [String: Date]()) { result, achievement in
+            if let date = achievement.unlockedDate {
+                result[achievement.id] = date
+            }
+        }
+        store.set(dict, forKey: unlockedAchievementsKey)
+    }
+
     private func evaluateAchievements() {
+        var unlocked = false
         for index in achievements.indices {
             if achievements[index].unlockedDate == nil,
                achievements[index].criteria(self) {
                 achievements[index].unlockedDate = Date()
+                unlocked = true
                 addGems(1)
             }
         }
+        if unlocked { saveUnlockedAchievements() }
     }
 
     private func evaluateMilestones() {
