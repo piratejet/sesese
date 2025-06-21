@@ -14,9 +14,10 @@ struct HabitTemplateFormView: View {
     let categories: [String]
 
     let original: Habit?
-    let onSave: (Habit) -> Void
-
-    init(habit: Habit?, categories: [String], onSave: @escaping (Habit) -> Void) {
+    let onSave: (Habit, DateComponents?) -> Void
+    @State private var reminderEnabled: Bool
+    @State private var reminderTime: Date
+    init(habit: Habit?, categories: [String], reminder: DateComponents?, onSave: @escaping (Habit, DateComponents?) -> Void) {
         self.original = habit
         self.categories = categories
         self.onSave = onSave
@@ -26,6 +27,9 @@ struct HabitTemplateFormView: View {
         _category = State(initialValue: habit?.category ?? categories.first ?? "")
         _value = State(initialValue: habit?.value.map { String($0) } ?? "")
         _unit = State(initialValue: habit?.unit ?? "")
+        let date = Calendar.current.date(from: reminder ?? DateComponents(hour: 9, minute: 0)) ?? Date()
+        _reminderEnabled = State(initialValue: reminder != nil)
+        _reminderTime = State(initialValue: date)
     }
 
     var body: some View {
@@ -54,6 +58,12 @@ struct HabitTemplateFormView: View {
                         .keyboardType(.numberPad)
                     TextField("Unit", text: $unit)
                 }
+                Section("Reminder") {
+                    Toggle("Enable", isOn: $reminderEnabled)
+                    if reminderEnabled {
+                        DatePicker("Time", selection: $reminderTime, displayedComponents: .hourAndMinute)
+                    }
+                }
             }
             .navigationTitle(original == nil ? "Add Habit" : "Edit Habit")
             .toolbar {
@@ -70,7 +80,8 @@ struct HabitTemplateFormView: View {
                                           category: category,
                                           value: val,
                                           unit: unit.isEmpty ? nil : unit)
-                        onSave(habit)
+                        let comps = reminderEnabled ? Calendar.current.dateComponents([.hour, .minute], from: reminderTime) : nil
+                        onSave(habit, comps)
                         dismiss()
                     }
                 }

@@ -35,14 +35,22 @@ struct HabitTemplatesView: View {
             }
             .sheet(item: $editingHabit) { habit in
                 let cats = Set(viewModel.categories.filter { $0 != "All" } + [habit.category]).sorted()
-                HabitTemplateFormView(habit: habit, categories: cats) { updated in
+                HabitTemplateFormView(habit: habit, categories: cats, reminder: viewModel.reminderTime(for: habit)) { updated, comps in
                     viewModel.updateHabitTemplate(updated)
+                    if let c = comps, let date = Calendar.current.date(from: c) {
+                        viewModel.scheduleReminder(for: updated, time: date)
+                    } else {
+                        viewModel.removeReminder(for: updated)
+                    }
                 }
             }
             .sheet(isPresented: $showAdd) {
                 let cats = viewModel.categories.filter { $0 != "All" }
-                HabitTemplateFormView(habit: nil, categories: cats) { newHabit in
+                HabitTemplateFormView(habit: nil, categories: cats, reminder: nil) { newHabit, comps in
                     viewModel.addHabitTemplate(newHabit)
+                    if let c = comps, let date = Calendar.current.date(from: c) {
+                        viewModel.scheduleReminder(for: newHabit, time: date)
+                    }
                 }
             }
         }
