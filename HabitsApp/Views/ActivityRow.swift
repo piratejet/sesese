@@ -27,8 +27,11 @@ struct ActivityRow: View {
                 .foregroundColor(habit.points > 0 ? .green : .red)
         }
         .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(8)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(.ultraThinMaterial)
+        )
+        .shadow(radius: 1)
         .swipeActions {
             Button(role: .destructive, action: onDelete) {
                 Label("Delete", systemImage: "trash")

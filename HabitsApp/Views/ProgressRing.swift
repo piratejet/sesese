@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ProgressRing: View {
     var progress: Double
-    var colors: [Color] = [.blue, .green]
+    var colors: [Color] = [Color("PrimaryColor"), Color("SecondaryColor")]
     var body: some View {
         ZStack {
             Circle().stroke(lineWidth: 10).opacity(0.3).foregroundColor(colors.first)

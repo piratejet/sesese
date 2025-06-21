@@ -20,6 +20,7 @@ struct MainView: View {
             HabitTemplatesView()
                 .tabItem { Label("Habits", systemImage: "list.bullet") }
         }
+        .accentColor(Color("PrimaryColor"))
         .environmentObject(viewModel)
     }
 }
