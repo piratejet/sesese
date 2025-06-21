@@ -9,7 +9,7 @@ struct ProfileHeader: View {
                 Image(systemName: "person.circle.fill")
                     .resizable()
                     .frame(width: 60, height: 60)
-                    .foregroundColor(.blue)
+                    .foregroundColor(Color("PrimaryColor"))
 
                 VStack(alignment: .leading) {
                     if viewModel.userName.isEmpty {
@@ -47,7 +47,14 @@ struct ProfileHeader: View {
             }
         }
         .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(10)
+        .background(
+            LinearGradient(
+                colors: [Color("PrimaryColor"), Color("SecondaryColor")],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        )
+        .cornerRadius(12)
+        .shadow(radius: 4)
     }
 }

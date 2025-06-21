@@ -20,34 +20,20 @@ struct ContentView: View {
                             .padding(.vertical)
 
                         Button(action: { showingHabitList = true }) {
-                            HStack {
-                                Image(systemName: "plus.circle.fill")
-                                Text("Add Progress")
-                            }
-                            .font(.headline)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
+                            Label("Add Progress", systemImage: "plus.circle.fill")
+                                .font(.headline)
                         }
+                        .buttonStyle(ModernButtonStyle())
                         .padding(.horizontal)
 
                         NavigationLink(destination:
                             DailyProgressView()
                                 .environmentObject(viewModel)
                         ) {
-                            HStack {
-                                Image(systemName: "calendar")
-                                Text("Daily")
-                            }
-                            .font(.headline)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.green)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
+                            Label("Daily", systemImage: "calendar")
+                                .font(.headline)
                         }
+                        .buttonStyle(ModernButtonStyle())
                         .padding(.horizontal)
 
                         RecentActivityView()

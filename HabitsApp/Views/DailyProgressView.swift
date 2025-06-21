@@ -109,15 +109,11 @@ struct DailyProgressView: View {
             // Add activity for selected day
             if selectedDate != nil {
                 Button(action: { showingAddSheet = true }) {
-                    HStack {
-                        Image(systemName: "plus")
-                        Text("Add Activity for Selected Day")
-                    }
-                    .font(.subheadline.bold())
-                    .padding(8)
-                    .background(Color.accentColor.opacity(0.1))
-                    .cornerRadius(8)
+                    Label("Add Activity for Selected Day", systemImage: "plus")
+                        .font(.subheadline.bold())
                 }
+                .buttonStyle(ModernButtonStyle())
+                .padding(.horizontal)
                 .padding(.bottom)
             }
 
