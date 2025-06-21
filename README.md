@@ -8,6 +8,10 @@ habits so the list is never empty.
 
 Habit templates can now be managed directly in the app. Open the **Habits** tab to add, edit, or remove templates. All changes are stored locally on disk.
 
+## Reminders
+
+You can schedule a daily notification for any habit. When adding or editing a habit template, enable the *Reminder* section and choose a time. The first time a reminder is scheduled the app will request permission to send notifications. Reminders repeat every day at the selected time.
+
 
 
 ## Getting started

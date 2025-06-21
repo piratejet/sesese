@@ -45,6 +45,10 @@ class HabitViewModel: ObservableObject {
     private var milestoneLevel: Int
     private let milestoneInterval: Int = 100
     private let unlockedAchievementsKey = "unlockedAchievements"
+    private let remindersKey = "habitReminders"
+
+    private var reminders: [UUID: DateComponents] = [:]
+    private let notificationManager = NotificationManager.shared
 
     /// Indicates whether the user has completed registration
     var isRegistered: Bool { !userName.isEmpty && !userEmail.isEmpty }
@@ -59,6 +63,7 @@ class HabitViewModel: ObservableObject {
         self.milestoneLevel = store.integer(forKey: "milestoneLevel")
         setupAchievements()
         loadUnlockedAchievements()
+        loadReminders()
         reloadAll()
     }
 
@@ -237,6 +242,53 @@ class HabitViewModel: ObservableObject {
             }
         }
         return false
+    }
+
+    // MARK: - Reminders
+    func reminderTime(for habit: Habit) -> DateComponents? {
+        reminders[habit.id]
+    }
+
+    func scheduleReminder(for habit: Habit, time: Date) {
+        var comps = Calendar.current.dateComponents([.hour, .minute], from: time)
+        comps.second = 0
+        reminders[habit.id] = comps
+        saveReminders()
+        notificationManager.requestAuthorization()
+        notificationManager.cancel(id: habit.id.uuidString)
+        notificationManager.schedule(id: habit.id.uuidString,
+                                     title: habit.name,
+                                     body: "Don't forget to log \(habit.name)",
+                                     at: comps)
+    }
+
+    func removeReminder(for habit: Habit) {
+        reminders.removeValue(forKey: habit.id)
+        saveReminders()
+        notificationManager.cancel(id: habit.id.uuidString)
+    }
+
+    private func loadReminders() {
+        reminders = [:]
+        if let dict = store.dictionary(forKey: remindersKey) as? [String: [Int]] {
+            for (key, value) in dict {
+                if let id = UUID(uuidString: key), value.count == 2 {
+                    var comps = DateComponents()
+                    comps.hour = value[0]
+                    comps.minute = value[1]
+                    reminders[id] = comps
+                }
+            }
+        }
+    }
+
+    private func saveReminders() {
+        let dict = reminders.reduce(into: [String: [Int]]()) { result, pair in
+            if let h = pair.value.hour, let m = pair.value.minute {
+                result[pair.key.uuidString] = [h, m]
+            }
+        }
+        store.set(dict, forKey: remindersKey)
     }
 }
 
