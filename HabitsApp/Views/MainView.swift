@@ -8,6 +8,9 @@ struct MainView: View {
             ContentView()
                 .tabItem { Label("Home",      systemImage: "house.fill") }
 
+            DailyProgressView()
+                .tabItem { Label("Daily",     systemImage: "calendar") }
+
             InsightsView()
                 .tabItem { Label("Insights",  systemImage: "chart.bar.fill") }
 

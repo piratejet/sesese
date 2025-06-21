@@ -39,7 +39,7 @@ struct ContentView: View {
                         ) {
                             HStack {
                                 Image(systemName: "calendar")
-                                Text("Daily Progress")
+                                Text("Daily")
                             }
                             .font(.headline)
                             .padding()
