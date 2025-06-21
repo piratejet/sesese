@@ -1,0 +1,16 @@
+# Xcode
+# Build products
+build/
+DerivedData/
+Build/
+
+# User data
+*.xcuserstate
+xcuserdata/
+
+# Misc
+.DS_Store
+
+# Xcode temporary files
+*.moved-aside
+
