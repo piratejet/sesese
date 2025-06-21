@@ -41,6 +41,8 @@ class HabitViewModel: ObservableObject {
     // MARK: - Dependencies
     let service: HabitService
     private let store: KeyValueStore
+    private var milestoneLevel: Int
+    private let milestoneInterval: Int = 100
 
     /// Indicates whether the user has completed registration
     var isRegistered: Bool { !userName.isEmpty && !userEmail.isEmpty }
@@ -52,6 +54,7 @@ class HabitViewModel: ObservableObject {
         self.userName  = store.string(forKey: "userName")  ?? ""
         self.userEmail = store.string(forKey: "userEmail") ?? ""
         self.gems      = store.integer(forKey: "gems")
+        self.milestoneLevel = store.integer(forKey: "milestoneLevel")
         setupAchievements()
         reloadAll()
     }
@@ -64,6 +67,7 @@ class HabitViewModel: ObservableObject {
         dailyHistory  = service.dailyHistory()
         allHabits     = service.fetchAllHabits()
         evaluateAchievements()
+        evaluateMilestones()
     }
 
     // MARK: - Habit Completion
@@ -144,8 +148,24 @@ class HabitViewModel: ObservableObject {
             if achievements[index].unlockedDate == nil,
                achievements[index].criteria(self) {
                 achievements[index].unlockedDate = Date()
+                addGems(1)
             }
         }
+    }
+
+    private func evaluateMilestones() {
+        let currentLevel = totalPoints / milestoneInterval
+        if currentLevel > milestoneLevel {
+            let diff = currentLevel - milestoneLevel
+            milestoneLevel = currentLevel
+            store.set(milestoneLevel, forKey: "milestoneLevel")
+            addGems(diff)
+        }
+    }
+
+    private func addGems(_ amount: Int) {
+        gems += amount
+        store.set(gems, forKey: "gems")
     }
 
     // MARK: - Achievement Criteria Helpers
