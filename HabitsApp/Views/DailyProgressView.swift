@@ -144,7 +144,7 @@ struct DailyProgressView: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("Daily Progress")
+            .navigationTitle("Daily")
         }
         // MARK: – Add-sheet
         .sheet(isPresented: $showingAddSheet) {
