@@ -6,5 +6,14 @@
   {"name":"Walk","points":5,"type":"Good Habit","category":"Fitness","value":1,"unit":"mile"},
   {"name":"Junk Food","points":-10,"type":"Bad Habit","category":"Diet"},
   {"name":"Procrastinate","points":-5,"type":"Bad Habit","category":"Productivity"},
-  {"name":"Smoke","points":-15,"type":"Bad Habit","category":"Health"}
+  {"name":"Smoke","points":-15,"type":"Bad Habit","category":"Health"},
+  {"name":"Brush Teeth","points":5,"type":"Good Habit","category":"Hygiene","value":2,"unit":"times"},
+  {"name":"Sleep 8 Hours","points":10,"type":"Good Habit","category":"Health","value":8,"unit":"hours"},
+  {"name":"Stretch","points":5,"type":"Good Habit","category":"Fitness","value":10,"unit":"minutes"},
+  {"name":"Plan Day","points":5,"type":"Good Habit","category":"Productivity","value":15,"unit":"minutes"},
+  {"name":"Skip Breakfast","points":-5,"type":"Bad Habit","category":"Diet"},
+  {"name":"Overeat","points":-8,"type":"Bad Habit","category":"Diet"},
+  {"name":"Watch Too Much TV","points":-10,"type":"Bad Habit","category":"Productivity"},
+  {"name":"Drink Alcohol","points":-12,"type":"Bad Habit","category":"Health"}
 ]
+

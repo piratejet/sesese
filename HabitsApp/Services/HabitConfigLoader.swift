@@ -11,7 +11,15 @@ struct HabitConfigLoader {
         Habit(name: "Walk",           points: 5,  type: .good, category: "Fitness",     value: 1,  unit: "mile"),
         Habit(name: "Junk Food",      points: -10, type: .bad, category: "Diet"),
         Habit(name: "Procrastinate", points: -5,  type: .bad, category: "Productivity"),
-        Habit(name: "Smoke",          points: -15, type: .bad, category: "Health")
+        Habit(name: "Smoke",          points: -15, type: .bad, category: "Health"),
+        Habit(name: "Brush Teeth",    points: 5,  type: .good, category: "Hygiene",     value: 2,  unit: "times"),
+        Habit(name: "Sleep 8 Hours",  points: 10, type: .good, category: "Health",       value: 8,  unit: "hours"),
+        Habit(name: "Stretch",        points: 5,  type: .good, category: "Fitness",     value: 10, unit: "minutes"),
+        Habit(name: "Plan Day",       points: 5,  type: .good, category: "Productivity", value: 15, unit: "minutes"),
+        Habit(name: "Skip Breakfast", points: -5,  type: .bad, category: "Diet"),
+        Habit(name: "Overeat",        points: -8,  type: .bad, category: "Diet"),
+        Habit(name: "Watch Too Much TV", points: -10, type: .bad, category: "Productivity"),
+        Habit(name: "Drink Alcohol",  points: -12, type: .bad, category: "Health")
     ]
 
     static func load(from fileName: String = "initial_habits.json") -> [Habit] {
