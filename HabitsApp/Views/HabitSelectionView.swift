@@ -45,71 +45,91 @@ struct HabitSelectionView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                Section("Filters") {
-                    Picker("Category", selection: $selectedCategory) {
-                        ForEach(viewModel.categories, id: \.self) { category in
-                            Text(category)
-                        }
-                    }
-                    Picker("Habit Type", selection: $selectedType) {
-                        Text("All").tag(nil as HabitType?)
-                        ForEach(HabitType.allCases, id: \.self) { type in
-                            Text(type.rawValue).tag(type as HabitType?)
-                        }
-                    }
-                }
+            habitList
+        }
+    }
 
-                Section("Habits") {
-                    ForEach(filteredHabits) { habit in
-                        Button {
-                            if isTimeBased(habit) {
-                                pendingHabit = habit
-                            } else {
-                                addHabit(habit)
-                            }
-                        } label: {
-                            HStack {
-                                Image(systemName: habit.type == .good
-                                      ? "plus.circle.fill" : "minus.circle.fill")
-                                    .foregroundColor(habit.type == .good ? .green : .red)
-                                if let value = habit.value, let unit = habit.unit {
-                                    Text("\(habit.name) (\(value) \(unit))")
-                                } else {
-                                    Text(habit.name)
-                                }
-                                Spacer()
-                                Text("\(habit.points > 0 ? "+" : "")\(habit.points) pts")
-                                    .bold()
-                                    .foregroundColor(habit.points > 0 ? .green : .red)
-                            }
-                        }
-                        .contextMenu {
-                            if isTimeBased(habit) {
-                                Button("Start Timer") { timerHabit = habit }
-                            }
-                        }
+    @ViewBuilder
+    private var habitList: some View {
+        List {
+            Section("Filters") {
+                Picker("Category", selection: $selectedCategory) {
+                    ForEach(viewModel.categories, id: \.self) { category in
+                        Text(category)
+                    }
+                }
+                Picker("Habit Type", selection: $selectedType) {
+                    Text("All").tag(nil as HabitType?)
+                    ForEach(HabitType.allCases, id: \.self) { type in
+                        Text(type.rawValue).tag(type as HabitType?)
                     }
                 }
             }
-            .navigationTitle("Add Habit")
-            .searchable(text: $searchText, prompt: "Search habits")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") { dismiss() }
+
+            Section("Habits") {
+                ForEach(filteredHabits) { habit in
+                    habitButton(for: habit)
                 }
-            }
-            .confirmationDialog("Add Habit", item: $pendingHabit) { habit in
-                Button("Add Now") { addHabit(habit) }
-                if isTimeBased(habit) {
-                    Button("Start Timer") { timerHabit = habit }
-                }
-                Button("Cancel", role: .cancel) {}
-            }
-            .sheet(item: $timerHabit) { habit in
-                HabitTimerView(habit: habit, completionDate: completionDate)
-                    .environmentObject(viewModel)
             }
         }
+        .navigationTitle("Add Habit")
+        .searchable(text: $searchText, prompt: "Search habits")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("Done") { dismiss() }
+            }
+        }
+        .confirmationDialog("Add Habit", item: $pendingHabit) { habit in
+            Button("Add Now") { addHabit(habit) }
+            if isTimeBased(habit) {
+                Button("Start Timer") { timerHabit = habit }
+            }
+            Button("Cancel", role: .cancel) {}
+        }
+        .sheet(item: $timerHabit) { habit in
+            HabitTimerView(habit: habit, completionDate: completionDate)
+                .environmentObject(viewModel)
+        }
+    }
+
+    @ViewBuilder
+    private func habitButton(for habit: Habit) -> some View {
+        Button {
+            if isTimeBased(habit) {
+                pendingHabit = habit
+            } else {
+                addHabit(habit)
+            }
+        } label: {
+            habitRow(for: habit)
+        }
+        .contextMenu {
+            if isTimeBased(habit) {
+                Button("Start Timer") { timerHabit = habit }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func habitRow(for habit: Habit) -> some View {
+        HStack {
+            Image(systemName: habit.type == .good
+                  ? "plus.circle.fill" : "minus.circle.fill")
+                .foregroundColor(habit.type == .good ? .green : .red)
+            if let value = habit.value, let unit = habit.unit {
+                Text("\(habit.name) (\(value) \(unit))")
+            } else {
+                Text(habit.name)
+            }
+            Spacer()
+            Text(pointsLabel(for: habit))
+                .bold()
+                .foregroundColor(habit.points > 0 ? .green : .red)
+        }
+    }
+
+    private func pointsLabel(for habit: Habit) -> String {
+        let prefix = habit.points > 0 ? "+" : ""
+        return "\(prefix)\(habit.points) pts"
     }
 }
