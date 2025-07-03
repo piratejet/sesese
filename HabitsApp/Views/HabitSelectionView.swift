@@ -8,6 +8,8 @@ struct HabitSelectionView: View {
     var completionDate: Date?      // Optional day you tapped
     @Environment(\.dismiss) var dismiss
     @State private var searchText = ""
+    @State private var pendingHabit: Habit?
+    @State private var timerHabit: Habit?
 
     // Simple filter in one computed property
     private var filteredHabits: [Habit] {
@@ -18,6 +20,27 @@ struct HabitSelectionView: View {
                                   habit.name.localizedCaseInsensitiveContains(searchText)
             return matchesCategory && matchesType && matchesSearch
         }
+    }
+
+    private func isTimeBased(_ habit: Habit) -> Bool {
+        guard let unit = habit.unit?.lowercased() else { return false }
+        return unit.contains("minute") || unit.contains("hour")
+    }
+
+    private func addHabit(_ habit: Habit) {
+        if let day = completionDate {
+            let now = Date()
+            var comps = Calendar.current.dateComponents([.year, .month, .day], from: day)
+            let time = Calendar.current.dateComponents([.hour, .minute, .second], from: now)
+            comps.hour = time.hour
+            comps.minute = time.minute
+            comps.second = time.second
+            let timestamp = Calendar.current.date(from: comps) ?? day
+            viewModel.addCompletion(habit, at: timestamp)
+        } else {
+            viewModel.add(habit)
+        }
+        dismiss()
     }
 
     var body: some View {
@@ -40,21 +63,11 @@ struct HabitSelectionView: View {
                 Section("Habits") {
                     ForEach(filteredHabits) { habit in
                         Button {
-                            // Use the correct ViewModel methods
-                            if let day = completionDate {
-                                // Preserve the selected day but use the current time
-                                let now = Date()
-                                var comps = Calendar.current.dateComponents([.year, .month, .day], from: day)
-                                let time = Calendar.current.dateComponents([.hour, .minute, .second], from: now)
-                                comps.hour = time.hour
-                                comps.minute = time.minute
-                                comps.second = time.second
-                                let timestamp = Calendar.current.date(from: comps) ?? day
-                                viewModel.addCompletion(habit, at: timestamp)
+                            if isTimeBased(habit) {
+                                pendingHabit = habit
                             } else {
-                                viewModel.add(habit)
+                                addHabit(habit)
                             }
-                            dismiss()
                         } label: {
                             HStack {
                                 Image(systemName: habit.type == .good
@@ -71,6 +84,11 @@ struct HabitSelectionView: View {
                                     .foregroundColor(habit.points > 0 ? .green : .red)
                             }
                         }
+                        .contextMenu {
+                            if isTimeBased(habit) {
+                                Button("Start Timer") { timerHabit = habit }
+                            }
+                        }
                     }
                 }
             }
@@ -80,6 +98,17 @@ struct HabitSelectionView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") { dismiss() }
                 }
+            }
+            .confirmationDialog("Add Habit", item: $pendingHabit) { habit in
+                Button("Add Now") { addHabit(habit) }
+                if isTimeBased(habit) {
+                    Button("Start Timer") { timerHabit = habit }
+                }
+                Button("Cancel", role: .cancel) {}
+            }
+            .sheet(item: $timerHabit) { habit in
+                HabitTimerView(habit: habit, completionDate: completionDate)
+                    .environmentObject(viewModel)
             }
         }
     }
