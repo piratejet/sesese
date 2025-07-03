@@ -79,12 +79,18 @@ struct HabitSelectionView: View {
                 Button("Done") { dismiss() }
             }
         }
-        .confirmationDialog("Add Habit", item: $pendingHabit) { habit in
+        .confirmationDialog(
+            "Add Habit",
+            item: $pendingHabit,
+            titleVisibility: .visible
+        ) { habit in
             Button("Add Now") { addHabit(habit) }
             if isTimeBased(habit) {
                 Button("Start Timer") { timerHabit = habit }
             }
             Button("Cancel", role: .cancel) {}
+        } message: { habit in
+            Text("How do you want to log \(habit.name)?")
         }
         .sheet(item: $timerHabit) { habit in
             HabitTimerView(habit: habit, completionDate: completionDate)
