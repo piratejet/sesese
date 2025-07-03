@@ -9,6 +9,7 @@ struct HabitSelectionView: View {
     @Environment(\.dismiss) var dismiss
     @State private var searchText = ""
     @State private var pendingHabit: Habit?
+    @State private var showConfirm = false
     @State private var timerHabit: Habit?
 
     // Simple filter in one computed property
@@ -81,12 +82,19 @@ struct HabitSelectionView: View {
         }
         .confirmationDialog(
             "Add Habit",
-            item: $pendingHabit,
-            titleVisibility: .visible
+            isPresented: $showConfirm,
+            titleVisibility: .visible,
+            presenting: pendingHabit
         ) { habit in
-            Button("Add Now") { addHabit(habit) }
+            Button("Add Now") {
+                addHabit(habit)
+                pendingHabit = nil
+            }
             if isTimeBased(habit) {
-                Button("Start Timer") { timerHabit = habit }
+                Button("Start Timer") {
+                    timerHabit = habit
+                    pendingHabit = nil
+                }
             }
             Button("Cancel", role: .cancel) {}
         } message: { habit in
@@ -103,6 +111,7 @@ struct HabitSelectionView: View {
         Button {
             if isTimeBased(habit) {
                 pendingHabit = habit
+                showConfirm = true
             } else {
                 addHabit(habit)
             }
