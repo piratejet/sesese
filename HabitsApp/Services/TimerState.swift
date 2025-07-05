@@ -26,6 +26,15 @@ class TimerState: ObservableObject {
         scheduleTimer()
     }
 
+    /// Resume the timer using the current elapsed value without resetting
+    func resume() {
+        guard !isRunning else { return }
+        // Continue from the previously elapsed time
+        startTime = Date().addingTimeInterval(-elapsed)
+        isRunning = true
+        scheduleTimer()
+    }
+
     func stop() {
         isRunning = false
     }

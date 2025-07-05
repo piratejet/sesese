@@ -18,8 +18,12 @@ struct HabitTimerView: View {
                 .font(.system(size: 48, weight: .bold, design: .monospaced))
 
             HStack(spacing: 40) {
-                Button(timerState.isRunning ? "Stop" : "Start") {
-                    timerState.isRunning ? stopTimer() : startTimer()
+                Button(timerState.isRunning ? "Stop" : (timerState.elapsed > 0 ? "Continue" : "Start")) {
+                    if timerState.isRunning {
+                        stopTimer()
+                    } else {
+                        continueTimer()
+                    }
                 }
                 .font(.title2)
                 .padding()
@@ -65,12 +69,16 @@ struct HabitTimerView: View {
         }
     }
 
-    private func startTimer() {
-        timerState.start()
-    }
-
     private func stopTimer() {
         timerState.stop()
+    }
+
+    private func continueTimer() {
+        if timerState.elapsed > 0 {
+            timerState.resume()
+        } else {
+            timerState.start()
+        }
     }
 
     private func save() {
