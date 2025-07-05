@@ -2,15 +2,11 @@ import SwiftUI
 
 struct HabitTimerView: View {
     @EnvironmentObject var viewModel: HabitViewModel
+    @EnvironmentObject var timerState: TimerState
     @Environment(\.dismiss) private var dismiss
 
     let habit: Habit
     var completionDate: Date? = nil
-
-    @State private var isRunning = false
-    @State private var startTime: Date?
-    @State private var elapsed: TimeInterval = 0
-    private let timerInterval: TimeInterval = 1
 
     var body: some View {
         VStack(spacing: 20) {
@@ -22,15 +18,15 @@ struct HabitTimerView: View {
                 .font(.system(size: 48, weight: .bold, design: .monospaced))
 
             HStack(spacing: 40) {
-                Button(isRunning ? "Stop" : "Start") {
-                    isRunning ? stopTimer() : startTimer()
+                Button(timerState.isRunning ? "Stop" : "Start") {
+                    timerState.isRunning ? stopTimer() : startTimer()
                 }
                 .font(.title2)
                 .padding()
-                .background(isRunning ? Color.red.opacity(0.2) : Color.green.opacity(0.2))
+                .background(timerState.isRunning ? Color.red.opacity(0.2) : Color.green.opacity(0.2))
                 .cornerRadius(8)
 
-                if !isRunning && elapsed > 0 {
+                if !timerState.isRunning && timerState.elapsed > 0 {
                     Button("Save") {
                         save()
                     }
@@ -43,11 +39,10 @@ struct HabitTimerView: View {
             Spacer()
         }
         .padding()
-        .onDisappear { stopTimer() }
     }
 
     private var formattedTime: String {
-        let totalSeconds = Int(elapsed)
+        let totalSeconds = Int(timerState.elapsed)
         let hours = totalSeconds / 3600
         let minutes = (totalSeconds % 3600) / 60
         let seconds = totalSeconds % 60
@@ -59,33 +54,24 @@ struct HabitTimerView: View {
     }
 
     private func startTimer() {
-        startTime = Date()
-        isRunning = true
-        elapsed = 0
-        Timer.scheduledTimer(withTimeInterval: timerInterval, repeats: true) { timer in
-            if let start = startTime, isRunning {
-                elapsed = Date().timeIntervalSince(start)
-            } else {
-                timer.invalidate()
-            }
-        }
+        timerState.start()
     }
 
     private func stopTimer() {
-        isRunning = false
+        timerState.stop()
     }
 
     private func save() {
         stopTimer()
-        guard elapsed > 0 else { return }
+        guard timerState.elapsed > 0 else { return }
 
-        let minutes = Int(elapsed / 60)
+        let minutes = Int(timerState.elapsed / 60)
         let baseValue = habit.value ?? 1
         var baseSeconds = Double(baseValue)
         if let unit = habit.unit?.lowercased(), unit.contains("hour") {
             baseSeconds *= 60
         }
-        let multiplier = baseSeconds > 0 ? (elapsed / (baseSeconds * 60)) : 1
+        let multiplier = baseSeconds > 0 ? (timerState.elapsed / (baseSeconds * 60)) : 1
         let points = Int(round(Double(habit.points) * multiplier))
 
         let newHabit = Habit(id: UUID(),
@@ -109,6 +95,7 @@ struct HabitTimerView: View {
             viewModel.addCompletion(newHabit, at: Date())
         }
         dismiss()
+        timerState.reset()
     }
 }
 

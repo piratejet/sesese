@@ -3,6 +3,7 @@ import SwiftUI
 @main
 struct HabitsAppApp: App {
     @StateObject private var viewModel: HabitViewModel
+    @StateObject private var timerState = TimerState()
 
     init() {
         let initialHabits = HabitConfigLoader.load()
@@ -15,12 +16,14 @@ struct HabitsAppApp: App {
         WindowGroup {
             MainView()
                 .environmentObject(viewModel)
+                .environmentObject(timerState)
                 .fullScreenCover(isPresented: Binding(
                     get: { !viewModel.isRegistered },
                     set: { _ in }
                 )) {
                     RegistrationView()
                         .environmentObject(viewModel)
+                        .environmentObject(timerState)
                 }
         }
     }

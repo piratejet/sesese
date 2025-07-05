@@ -3,6 +3,7 @@ import SwiftUI
 
 struct HabitSelectionView: View {
     @EnvironmentObject var viewModel: HabitViewModel
+    @EnvironmentObject var timerState: TimerState
     @Binding var selectedCategory: String
     @Binding var selectedType: HabitType?
     var completionDate: Date?      // Optional day you tapped
@@ -103,6 +104,7 @@ struct HabitSelectionView: View {
         .sheet(item: $timerHabit) { habit in
             HabitTimerView(habit: habit, completionDate: completionDate)
                 .environmentObject(viewModel)
+                .environmentObject(timerState)
         }
     }
 
