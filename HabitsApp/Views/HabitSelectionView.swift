@@ -92,8 +92,8 @@ struct HabitSelectionView: View {
             }
             if isTimeBased(habit) {
                 Button("Start Timer") {
-                    timerState.currentHabit = habit
-                    timerState.completionDate = completionDate
+                    timerState.start(with: habit, completionDate: completionDate)
+                    timerState.isMinimized = false
                     timerState.showTimerView = true
                     pendingHabit = nil
                 }
@@ -119,8 +119,8 @@ struct HabitSelectionView: View {
         .contextMenu {
             if isTimeBased(habit) {
                 Button("Start Timer") {
-                    timerState.currentHabit = habit
-                    timerState.completionDate = completionDate
+                    timerState.start(with: habit, completionDate: completionDate)
+                    timerState.isMinimized = false
                     timerState.showTimerView = true
                 }
             }
