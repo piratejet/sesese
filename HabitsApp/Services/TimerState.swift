@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import AudioToolbox
 
 class TimerState: ObservableObject {
     @Published var isRunning: Bool = false
@@ -14,6 +15,11 @@ class TimerState: ObservableObject {
     private var startTime: Date?
     private var timer: Timer?
     private let timerInterval: TimeInterval = 1
+
+    private func playAlarm() {
+        // Use a built-in system sound for the alarm
+        AudioServicesPlaySystemSound(SystemSoundID(1013))
+    }
 
     func start(with habit: Habit? = nil, completionDate: Date? = nil) {
         if let habit = habit {
@@ -78,6 +84,7 @@ class TimerState: ObservableObject {
                     self.elapsed = self.duration
                     self.isRunning = false
                     self.timer?.invalidate()
+                    self.playAlarm()
                 }
             }
         }

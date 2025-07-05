@@ -31,13 +31,17 @@ struct HabitTimerView: View {
                 .cornerRadius(8)
 
                 if !timerState.isRunning && timerState.elapsed > 0 {
-                    Button("Save") {
-                        save()
-                    }
-                    .font(.title2)
-                    .padding()
-                    .background(Color.blue.opacity(0.2))
-                    .cornerRadius(8)
+                    Button("Save") { save() }
+                        .font(.title2)
+                        .padding()
+                        .background(Color.blue.opacity(0.2))
+                        .cornerRadius(8)
+
+                    Button("Save & Restart") { saveAndRestart() }
+                        .font(.title2)
+                        .padding()
+                        .background(Color.orange.opacity(0.2))
+                        .cornerRadius(8)
                 }
             }
             Spacer()
@@ -92,7 +96,17 @@ struct HabitTimerView: View {
         dismiss()
     }
 
-    private func recordCompletion() {
+    private func saveAndRestart() {
+        stopTimer()
+        recordCompletion(reset: false)
+        if timerState.isCountdown {
+            timerState.startCountdown(with: habit, completionDate: completionDate)
+        } else {
+            timerState.start(with: habit, completionDate: completionDate)
+        }
+    }
+
+    private func recordCompletion(reset: Bool = true) {
         guard timerState.elapsed > 0 else { return }
 
         let minutes = Int(timerState.elapsed / 60)
@@ -124,7 +138,9 @@ struct HabitTimerView: View {
         } else {
             viewModel.addCompletion(newHabit, at: Date())
         }
-        timerState.reset()
+        if reset {
+            timerState.reset()
+        }
     }
 }
 
