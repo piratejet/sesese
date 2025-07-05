@@ -14,14 +14,25 @@ class TimerState: ObservableObject {
 
     private var startTime: Date?
     private var timer: Timer?
+    private var alarmTimer: Timer?
     private let timerInterval: TimeInterval = 1
 
-    private func playAlarm() {
-        // Use a built-in system sound for the alarm
-        AudioServicesPlaySystemSound(SystemSoundID(1013))
+    private func startAlarm() {
+        stopAlarm()
+        alarmTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            // Play a standard alarm sound repeatedly
+            AudioServicesPlaySystemSound(SystemSoundID(1005))
+        }
+        alarmTimer?.fire()
+    }
+
+    private func stopAlarm() {
+        alarmTimer?.invalidate()
+        alarmTimer = nil
     }
 
     func start(with habit: Habit? = nil, completionDate: Date? = nil) {
+        stopAlarm()
         if let habit = habit {
             self.currentHabit = habit
         }
@@ -42,10 +53,12 @@ class TimerState: ObservableObject {
         // Continue from the previously elapsed time
         startTime = Date().addingTimeInterval(-elapsed)
         isRunning = true
+        stopAlarm()
         scheduleTimer()
     }
 
     func startCountdown(with habit: Habit, completionDate: Date? = nil) {
+        stopAlarm()
         currentHabit = habit
         completionDate.map { self.completionDate = $0 }
         duration = Self.seconds(for: habit)
@@ -58,9 +71,11 @@ class TimerState: ObservableObject {
 
     func stop() {
         isRunning = false
+        stopAlarm()
     }
 
     func reset() {
+        stopAlarm()
         timer?.invalidate()
         timer = nil
         startTime = nil
@@ -84,7 +99,7 @@ class TimerState: ObservableObject {
                     self.elapsed = self.duration
                     self.isRunning = false
                     self.timer?.invalidate()
-                    self.playAlarm()
+                    self.startAlarm()
                 }
             }
         }

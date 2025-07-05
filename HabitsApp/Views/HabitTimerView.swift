@@ -8,6 +8,20 @@ struct HabitTimerView: View {
     let habit: Habit
     var completionDate: Date? = nil
 
+    private var countdownFinished: Bool {
+        timerState.isCountdown && timerState.elapsed >= timerState.duration && !timerState.isRunning
+    }
+
+    private var primaryButtonTitle: String {
+        if timerState.isRunning {
+            return "Stop"
+        } else if timerState.elapsed > 0 && !countdownFinished {
+            return "Continue"
+        } else {
+            return "Start"
+        }
+    }
+
     var body: some View {
         VStack(spacing: 20) {
             Text(habit.name)
@@ -18,17 +32,15 @@ struct HabitTimerView: View {
                 .font(.system(size: 48, weight: .bold, design: .monospaced))
 
             HStack(spacing: 40) {
-                Button(timerState.isRunning ? "Stop" : (timerState.elapsed > 0 ? "Continue" : "Start")) {
-                    if timerState.isRunning {
-                        stopTimer()
-                    } else {
-                        continueTimer()
+                if timerState.isRunning || !countdownFinished {
+                    Button(primaryButtonTitle) {
+                        handlePrimaryAction()
                     }
+                    .font(.title2)
+                    .padding()
+                    .background(timerState.isRunning ? Color.red.opacity(0.2) : Color.green.opacity(0.2))
+                    .cornerRadius(8)
                 }
-                .font(.title2)
-                .padding()
-                .background(timerState.isRunning ? Color.red.opacity(0.2) : Color.green.opacity(0.2))
-                .cornerRadius(8)
 
                 if !timerState.isRunning && timerState.elapsed > 0 {
                     Button("Save") { save() }
@@ -78,8 +90,10 @@ struct HabitTimerView: View {
         timerState.stop()
     }
 
-    private func continueTimer() {
-        if timerState.elapsed > 0 {
+    private func handlePrimaryAction() {
+        if timerState.isRunning {
+            stopTimer()
+        } else if timerState.elapsed > 0 && !countdownFinished {
             timerState.resume()
         } else {
             if timerState.isCountdown {
