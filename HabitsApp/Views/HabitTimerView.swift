@@ -45,6 +45,9 @@ struct HabitTimerView: View {
             timerState.isMinimized = false
         }
         .onDisappear {
+            if !timerState.isRunning && timerState.elapsed > 0 {
+                recordCompletion()
+            }
             timerState.isMinimized = timerState.isRunning
             timerState.showTimerView = false
         }
@@ -72,6 +75,11 @@ struct HabitTimerView: View {
 
     private func save() {
         stopTimer()
+        recordCompletion()
+        dismiss()
+    }
+
+    private func recordCompletion() {
         guard timerState.elapsed > 0 else { return }
 
         let minutes = Int(timerState.elapsed / 60)
@@ -103,7 +111,6 @@ struct HabitTimerView: View {
         } else {
             viewModel.addCompletion(newHabit, at: Date())
         }
-        dismiss()
         timerState.reset()
     }
 }
