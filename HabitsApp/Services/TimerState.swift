@@ -4,11 +4,22 @@ import Combine
 class TimerState: ObservableObject {
     @Published var isRunning: Bool = false
     @Published var elapsed: TimeInterval = 0
+    @Published var currentHabit: Habit?
+    @Published var completionDate: Date?
+    @Published var isMinimized: Bool = false
+    @Published var showTimerView: Bool = false
+
     private var startTime: Date?
     private var timer: Timer?
     private let timerInterval: TimeInterval = 1
 
-    func start() {
+    func start(with habit: Habit? = nil, completionDate: Date? = nil) {
+        if let habit = habit {
+            self.currentHabit = habit
+        }
+        if let date = completionDate {
+            self.completionDate = date
+        }
         startTime = Date()
         elapsed = 0
         isRunning = true
@@ -25,6 +36,10 @@ class TimerState: ObservableObject {
         startTime = nil
         elapsed = 0
         isRunning = false
+        isMinimized = false
+        showTimerView = false
+        currentHabit = nil
+        completionDate = nil
     }
 
     private func scheduleTimer() {

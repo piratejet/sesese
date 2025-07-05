@@ -11,7 +11,6 @@ struct HabitSelectionView: View {
     @State private var searchText = ""
     @State private var pendingHabit: Habit?
     @State private var showConfirm = false
-    @State private var timerHabit: Habit?
 
     // Simple filter in one computed property
     private var filteredHabits: [Habit] {
@@ -93,18 +92,15 @@ struct HabitSelectionView: View {
             }
             if isTimeBased(habit) {
                 Button("Start Timer") {
-                    timerHabit = habit
+                    timerState.currentHabit = habit
+                    timerState.completionDate = completionDate
+                    timerState.showTimerView = true
                     pendingHabit = nil
                 }
             }
             Button("Cancel", role: .cancel) {}
         } message: { habit in
             Text("How do you want to log \(habit.name)?")
-        }
-        .sheet(item: $timerHabit) { habit in
-            HabitTimerView(habit: habit, completionDate: completionDate)
-                .environmentObject(viewModel)
-                .environmentObject(timerState)
         }
     }
 
@@ -122,7 +118,11 @@ struct HabitSelectionView: View {
         }
         .contextMenu {
             if isTimeBased(habit) {
-                Button("Start Timer") { timerHabit = habit }
+                Button("Start Timer") {
+                    timerState.currentHabit = habit
+                    timerState.completionDate = completionDate
+                    timerState.showTimerView = true
+                }
             }
         }
     }

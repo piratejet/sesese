@@ -39,6 +39,15 @@ struct HabitTimerView: View {
             Spacer()
         }
         .padding()
+        .onAppear {
+            timerState.currentHabit = habit
+            timerState.completionDate = completionDate
+            timerState.isMinimized = false
+        }
+        .onDisappear {
+            timerState.isMinimized = timerState.isRunning
+            timerState.showTimerView = false
+        }
     }
 
     private var formattedTime: String {

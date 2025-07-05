@@ -17,6 +17,20 @@ struct HabitsAppApp: App {
             MainView()
                 .environmentObject(viewModel)
                 .environmentObject(timerState)
+                .overlay(alignment: .bottomTrailing) {
+                    if timerState.isMinimized && timerState.isRunning {
+                        FloatingTimerView()
+                            .environmentObject(timerState)
+                            .padding()
+                    }
+                }
+                .sheet(isPresented: $timerState.showTimerView) {
+                    if let habit = timerState.currentHabit {
+                        HabitTimerView(habit: habit, completionDate: timerState.completionDate)
+                            .environmentObject(viewModel)
+                            .environmentObject(timerState)
+                    }
+                }
                 .fullScreenCover(isPresented: Binding(
                     get: { !viewModel.isRegistered },
                     set: { _ in }

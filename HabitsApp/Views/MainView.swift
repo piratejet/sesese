@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MainView: View {
     @EnvironmentObject private var viewModel: HabitViewModel
+    @EnvironmentObject private var timerState: TimerState
 
     var body: some View {
         TabView {
