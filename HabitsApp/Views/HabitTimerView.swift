@@ -58,7 +58,8 @@ struct HabitTimerView: View {
     }
 
     private var formattedTime: String {
-        let totalSeconds = Int(timerState.elapsed)
+        let time = timerState.isCountdown ? max(timerState.duration - timerState.elapsed, 0) : timerState.elapsed
+        let totalSeconds = Int(time)
         let hours = totalSeconds / 3600
         let minutes = (totalSeconds % 3600) / 60
         let seconds = totalSeconds % 60
@@ -77,7 +78,11 @@ struct HabitTimerView: View {
         if timerState.elapsed > 0 {
             timerState.resume()
         } else {
-            timerState.start()
+            if timerState.isCountdown {
+                timerState.startCountdown(with: habit, completionDate: completionDate)
+            } else {
+                timerState.start(with: habit, completionDate: completionDate)
+            }
         }
     }
 

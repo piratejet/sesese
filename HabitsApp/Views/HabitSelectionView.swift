@@ -97,6 +97,12 @@ struct HabitSelectionView: View {
                     timerState.showTimerView = true
                     pendingHabit = nil
                 }
+                Button("Start Countdown") {
+                    timerState.startCountdown(with: habit, completionDate: completionDate)
+                    timerState.isMinimized = false
+                    timerState.showTimerView = true
+                    pendingHabit = nil
+                }
             }
             Button("Cancel", role: .cancel) {}
         } message: { habit in
@@ -120,6 +126,11 @@ struct HabitSelectionView: View {
             if isTimeBased(habit) {
                 Button("Start Timer") {
                     timerState.start(with: habit, completionDate: completionDate)
+                    timerState.isMinimized = false
+                    timerState.showTimerView = true
+                }
+                Button("Start Countdown") {
+                    timerState.startCountdown(with: habit, completionDate: completionDate)
                     timerState.isMinimized = false
                     timerState.showTimerView = true
                 }

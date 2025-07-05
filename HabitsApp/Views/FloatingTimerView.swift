@@ -6,7 +6,8 @@ struct FloatingTimerView: View {
     @GestureState private var dragOffset: CGSize = .zero
 
     private var formattedTime: String {
-        let totalSeconds = Int(timerState.elapsed)
+        let time = timerState.isCountdown ? max(timerState.duration - timerState.elapsed, 0) : timerState.elapsed
+        let totalSeconds = Int(time)
         let minutes = totalSeconds / 60
         let seconds = totalSeconds % 60
         return String(format: "%02d:%02d", minutes, seconds)

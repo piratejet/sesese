@@ -4,6 +4,8 @@ import Combine
 class TimerState: ObservableObject {
     @Published var isRunning: Bool = false
     @Published var elapsed: TimeInterval = 0
+    @Published var isCountdown: Bool = false
+    @Published var duration: TimeInterval = 0
     @Published var currentHabit: Habit?
     @Published var completionDate: Date?
     @Published var isMinimized: Bool = false
@@ -20,6 +22,8 @@ class TimerState: ObservableObject {
         if let date = completionDate {
             self.completionDate = date
         }
+        isCountdown = false
+        duration = 0
         startTime = Date()
         elapsed = 0
         isRunning = true
@@ -35,6 +39,17 @@ class TimerState: ObservableObject {
         scheduleTimer()
     }
 
+    func startCountdown(with habit: Habit, completionDate: Date? = nil) {
+        currentHabit = habit
+        completionDate.map { self.completionDate = $0 }
+        duration = Self.seconds(for: habit)
+        isCountdown = true
+        startTime = Date()
+        elapsed = 0
+        isRunning = true
+        scheduleTimer()
+    }
+
     func stop() {
         isRunning = false
     }
@@ -44,6 +59,8 @@ class TimerState: ObservableObject {
         timer = nil
         startTime = nil
         elapsed = 0
+        duration = 0
+        isCountdown = false
         isRunning = false
         isMinimized = false
         showTimerView = false
@@ -57,7 +74,22 @@ class TimerState: ObservableObject {
             guard let self = self else { return }
             if let start = self.startTime, self.isRunning {
                 self.elapsed = Date().timeIntervalSince(start)
+                if self.isCountdown && self.elapsed >= self.duration {
+                    self.elapsed = self.duration
+                    self.isRunning = false
+                    self.timer?.invalidate()
+                }
             }
         }
+    }
+
+    private static func seconds(for habit: Habit) -> TimeInterval {
+        guard let value = habit.value else { return 0 }
+        var seconds = Double(value)
+        if let unit = habit.unit?.lowercased() {
+            if unit.contains("hour") { seconds *= 3600 }
+            else if unit.contains("minute") { seconds *= 60 }
+        }
+        return seconds
     }
 }
