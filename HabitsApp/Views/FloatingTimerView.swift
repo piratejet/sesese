@@ -2,7 +2,8 @@ import SwiftUI
 
 struct FloatingTimerView: View {
     @EnvironmentObject var timerState: TimerState
-    @State private var offset: CGSize = .zero
+    @State private var position: CGSize = .zero
+    @GestureState private var dragOffset: CGSize = .zero
 
     private var formattedTime: String {
         let totalSeconds = Int(timerState.elapsed)
@@ -13,16 +14,21 @@ struct FloatingTimerView: View {
 
     var body: some View {
         Text(formattedTime)
-            .font(.caption2.monospacedDigit())
-            .padding(12)
+            .font(.headline.monospacedDigit())
+            .frame(width: 60, height: 60)
             .background(Color.blue.opacity(0.9))
             .foregroundColor(.white)
             .clipShape(Circle())
-            .offset(offset)
+            .offset(x: position.width + dragOffset.width,
+                    y: position.height + dragOffset.height)
             .gesture(
                 DragGesture()
-                    .onChanged { value in
-                        offset = value.translation
+                    .updating($dragOffset) { value, state, _ in
+                        state = value.translation
+                    }
+                    .onEnded { value in
+                        position.width += value.translation.width
+                        position.height += value.translation.height
                     }
             )
             .onTapGesture {
