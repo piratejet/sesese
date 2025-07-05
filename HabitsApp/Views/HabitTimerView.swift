@@ -37,23 +37,17 @@ struct HabitTimerView: View {
                         handlePrimaryAction()
                     }
                     .font(.title2)
-                    .padding()
-                    .background(timerState.isRunning ? Color.red.opacity(0.2) : Color.green.opacity(0.2))
-                    .cornerRadius(8)
+                    .buttonStyle(TimerButtonStyle(background: timerState.isRunning ? .red : .green))
                 }
 
                 if !timerState.isRunning && timerState.elapsed > 0 {
                     Button("Save") { save() }
                         .font(.title2)
-                        .padding()
-                        .background(Color.blue.opacity(0.2))
-                        .cornerRadius(8)
+                        .buttonStyle(TimerButtonStyle(background: .blue))
 
                     Button("Save & Restart") { saveAndRestart() }
                         .font(.title2)
-                        .padding()
-                        .background(Color.orange.opacity(0.2))
-                        .cornerRadius(8)
+                        .buttonStyle(TimerButtonStyle(background: .orange))
                 }
             }
             Spacer()
