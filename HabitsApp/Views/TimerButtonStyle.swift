@@ -6,14 +6,23 @@ struct TimerButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .font(.headline)
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
             .foregroundColor(foreground)
-            .padding(.horizontal, 24)
-            .padding(.vertical, 12)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
             .background(
-                Capsule()
-                    .fill(background)
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [background, background.opacity(0.7)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
             )
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
             .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
     }
 }

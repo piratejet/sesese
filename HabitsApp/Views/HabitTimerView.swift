@@ -23,7 +23,7 @@ struct HabitTimerView: View {
     }
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 24) {
             Text(habit.name)
                 .font(.title)
                 .padding(.top)
@@ -31,22 +31,19 @@ struct HabitTimerView: View {
             Text(formattedTime)
                 .font(.system(size: 48, weight: .bold, design: .monospaced))
 
-            HStack(spacing: 40) {
+            VStack(spacing: 12) {
                 if timerState.isRunning || !countdownFinished {
                     Button(primaryButtonTitle) {
                         handlePrimaryAction()
                     }
-                    .font(.title2)
                     .buttonStyle(TimerButtonStyle(background: timerState.isRunning ? .red : .green))
                 }
 
                 if !timerState.isRunning && timerState.elapsed > 0 {
                     Button("Save") { save() }
-                        .font(.title2)
                         .buttonStyle(TimerButtonStyle(background: .blue))
 
                     Button("Save & Restart") { saveAndRestart() }
-                        .font(.title2)
                         .buttonStyle(TimerButtonStyle(background: .orange))
                 }
             }
